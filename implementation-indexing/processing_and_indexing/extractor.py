@@ -1,6 +1,7 @@
+import nltk
 from bs4 import BeautifulSoup, Comment
 from nltk.tokenize import word_tokenize
-from constants import IGNORED_TAGS
+from processing_and_indexing.helpers.constants import IGNORED_TAGS
 
 
 def create_soup(html: str) -> BeautifulSoup:

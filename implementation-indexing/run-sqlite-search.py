@@ -1,8 +1,9 @@
 import sys
+from processing_and_indexing.processor import process_files
 
 
 def main() -> None:
-    print("Not yet implemented.", file=sys.stderr)
+    process_files()
 
 
 if __name__ == "__main__":

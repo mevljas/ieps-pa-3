@@ -1,7 +1,7 @@
 import nltk
 from bs4 import BeautifulSoup, Comment
 from nltk.tokenize import word_tokenize
-from processing_and_indexing.helpers.constants import IGNORED_TAGS
+from processing_and_indexing.helpers.constants import IGNORED_TAGS, stop_words_slovene
 
 
 def create_soup(html: str) -> BeautifulSoup:
@@ -55,4 +55,16 @@ def extract(html: str) -> [str]:
     # Generate tokens from HTML.
     tokens = tokenize(soup=soup)
 
-    return tokens
+    # Convert to lower case.
+    lower_tokens = list(map(str.lower, tokens))
+
+    return lower_tokens
+
+
+def remove_stopwords(tokens: [str]) -> [str]:
+    """
+    Removes all stopwords from the list of tokens.
+    :param tokens: a list of tokens.
+    :return: filtered list of tokens.
+    """
+    return [token for token in tokens if token not in list(stop_words_slovene)]

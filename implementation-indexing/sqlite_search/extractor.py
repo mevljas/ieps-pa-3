@@ -1,7 +1,7 @@
 import nltk
 from bs4 import BeautifulSoup, Comment
 from nltk.tokenize import word_tokenize
-from processing_and_indexing.helpers.constants import IGNORED_TAGS, stop_words_slovene
+from sqlite_search.helpers.constants import IGNORED_TAGS, stop_words_slovene
 
 
 def create_soup(html: str) -> BeautifulSoup:
@@ -34,7 +34,10 @@ def tokenize(soup: BeautifulSoup) -> [str]:
     :param soup: beautifulSoup object with html data to be cleaned.
     :return: a list of tokens.
     """
-    text = soup.get_text()
+    text = soup.get_text(strip=True)
+    # Remove some characters.
+    text = text.replace("'", "")
+    text = text.replace('"', "")
     tokens = word_tokenize(text=text)
     return tokens
 

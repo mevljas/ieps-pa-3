@@ -37,7 +37,7 @@ MANIFEST
 pip-log.txt
 pip-delete-this-directory.txt
 
-# Unit tests / coverage reports
+# Unit test / coverage reports
 htmlcov/
 .tox/
 .nox/
@@ -130,4 +130,4 @@ dmypy.json
 
 .idea
 .vscode
-.DS_Store
+/implementation-indexing/inverted-index.db

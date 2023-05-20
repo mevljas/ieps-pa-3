@@ -1,32 +1,42 @@
 from collections import defaultdict
 from os import walk
-from processing_and_indexing.helpers.reader import read_file
-from processing_and_indexing.extractor import extract, remove_stopwords
+from typing import Tuple, Any, Dict
+
+from database.Database import Database
+from sqlite_search.helpers.reader import read_file
+from sqlite_search.extractor import extract, remove_stopwords
 
 
-def process_files() -> None:
+def process_files(database: Database) -> None:
     """
     Find all proces all files in the input directory.
     """
     filenames: [str] = find_files()
+    all_tokens: {} = set()
+    all_frequencies: {} = dict()
     for filename in filenames:
-        process_file(path=filename)
+        tokens, frequencies = process_file(path=filename)
+        all_tokens = all_tokens.union(set(tokens))
+        all_frequencies[filename[9:]] = frequencies
+
+    database.save_words(words=all_tokens)
+    database.save_frequencies(frequencies=all_frequencies)
 
 
-def process_file(path: str) -> None:
+def process_file(path: str) -> ([str], {}):
     """
     Processes a file at the path and calculates word frequencies.
     :param path: path of the file to be processed.
     """
     html = read_file(path=path)
     tokens: [str] = extract(html=html)
-    filtered_tokens = remove_stopwords(tokens=tokens)
-    frequencies = count_frequencies(filtered_tokens)
-    print(frequencies)
+    tokens = remove_stopwords(tokens=tokens)
+    frequencies = count_frequencies(tokens)
+    return tokens, frequencies
 
 
 def count_frequencies(tokens: [str]):
-    frequencies = defaultdict(lambda: 0)
+    frequencies = dict()
     for unique_token in set(tokens):
         frequencies[unique_token] = find_indices(list_to_check=tokens, item_to_find=unique_token)
     return frequencies

@@ -1,8 +1,9 @@
-from processing_and_indexing.processor import process_files
+from sqlite_search.processor import process_files
 
 
 def main() -> None:
-    process_files()
+    print("not yet implemented.")
+
 
 
 if __name__ == "__main__":

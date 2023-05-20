@@ -7,20 +7,23 @@ from sqlite_search.helpers.reader import read_file
 from sqlite_search.extractor import extract, remove_stopwords
 
 
-def process_files(database: Database) -> None:
+def process_files(database: Database) -> dict:
     """
     Find all proces all files in the input directory.
     """
     filenames: [str] = find_files()
     all_tokens: {} = set()
     all_frequencies: {} = dict()
+    document_tokens: {} = dict()
     for filename in filenames:
         tokens, frequencies = process_file(path=filename)
         all_tokens = all_tokens.union(set(tokens))
         all_frequencies[filename[9:]] = frequencies
+        document_tokens[filename[9:]] = tokens
 
     database.save_words(words=all_tokens)
     database.save_frequencies(frequencies=all_frequencies)
+    return document_tokens
 
 
 def process_file(path: str) -> ([str], {}):

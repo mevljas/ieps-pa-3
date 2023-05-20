@@ -7,9 +7,8 @@ from sqlite_search.retrival import search
 
 
 def init_database() -> Database:
-    # Remove old database if it exists.
     db_file = "inverted-index.db"
-    # If file exists, delete it.
+    # Remove old database if it exists.
     if os.path.isfile(db_file):
         os.remove(db_file)
     database = Database()
@@ -18,13 +17,50 @@ def init_database() -> Database:
     return database
 
 
-def print_result(result: dict, query: str) -> None:
+def print_result(result: list, query: str) -> None:
     print(f"Results for a query: {query}")
     print()
-    print(" Results found in 4ms.")
-    print(" Frequencies Document                                  Snippet")
-    print("----------- ----------------------------------------- "
+    print(" Results found in x ms.")
+    print(" Frequencies Document                                   Snippet")
+    print(" ----------- ------------------------------------------ "
           "-----------------------------------------------------------")
+    for row in result:
+        frequency, document, snippets = row
+        print(f" {frequency:<12}{document:<43}{snippets}")
+
+
+def find_snippets(document_tokens: dict, frequencies: []):
+    result = []
+    for row in frequencies:
+        document, frequency, indexes = row
+        snippets = find_snippet(tokens=document_tokens[document], indexes=[int(index) for index in indexes.split(",")])
+        result.append((frequency, document, snippets))
+
+    return result
+
+
+def find_snippet(tokens: [], indexes: [int]):
+    result = []
+    new_indexes = set()
+    for index in indexes:
+        new_indexes = new_indexes.union(set(range(index - 3, index + 1)))
+        new_indexes = new_indexes.union(set(range(index + 1, index + 4)))
+
+    new_indexes = list(new_indexes)
+    new_indexes.sort()
+    for i in range(0, len(new_indexes)):
+        current_index = new_indexes[i]
+        if i == 0 and current_index > 0:
+            result.append('...')
+        elif i > 0 and current_index - new_indexes[i - 1] > 1:
+            result.append('...')
+        result.append(tokens[new_indexes[i]])
+
+    if new_indexes[-1] != len(tokens) - 1:
+        result.append('...')
+
+    return " ".join(result)
+
 
 def main() -> None:
     if len(sys.argv) != 2:
@@ -33,10 +69,12 @@ def main() -> None:
     _, algorithm = sys.argv
 
     database = init_database()
-    process_files(database=database)
+    document_tokens = process_files(database=database)
     words = sys.argv[1].lower().split(" ")
     words = [f'{word}' for word in words]
-    search(database=database, words=words)
+    result = search(database=database, words=words)
+    full_result = find_snippets(document_tokens=document_tokens, frequencies=result)
+    print_result(result=full_result, query=sys.argv[1])
     database.close_connection()
 
 

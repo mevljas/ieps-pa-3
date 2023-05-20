@@ -54,7 +54,7 @@ class Database:
 
         self.conn.commit()
 
-    def search(self, words: [str]) -> dict:
+    def search(self, words: [str]) -> list[tuple[str, int, str]]:
         c = self.conn.cursor()
         values = ""
         for word in words:
@@ -70,11 +70,10 @@ class Database:
             GROUP BY p.documentName
             ORDER BY freq DESC;
         """)
-        result = dict()
+        result = []
         for row in cursor:
-            # document, frequency, indexes = row
-            # result[document] = result.get(document, set()).union(set((indexes.split(","))))
-            print(f"\tHits: {row[1]}\n\t\tDoc: '{row[0]}'\n\t\tIndexes: {row[2]}")
+            document, frequency, indexes = row
+            result.append((document, frequency, indexes))
 
         return result
 

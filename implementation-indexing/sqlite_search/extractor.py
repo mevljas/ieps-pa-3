@@ -34,7 +34,7 @@ def tokenize(soup: BeautifulSoup) -> [str]:
     :param soup: beautifulSoup object with html data to be cleaned.
     :return: a list of tokens.
     """
-    text = soup.get_text(strip=True)
+    text = soup.get_text(separator=' ')
     # Remove some characters.
     text = text.replace("'", "")
     text = text.replace('"', "")
@@ -59,9 +59,8 @@ def extract(html: str) -> [str]:
     tokens = tokenize(soup=soup)
 
     # Convert to lower case.
-    lower_tokens = list(map(str.lower, tokens))
-
-    return lower_tokens
+    tokens = [x.lower() for x in tokens]
+    return tokens
 
 
 def remove_stopwords(tokens: [str]) -> [str]:

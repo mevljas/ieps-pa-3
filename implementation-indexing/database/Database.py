@@ -45,7 +45,7 @@ class Database:
             values = ""
             filename, indexes = file
             for index in indexes:
-                values += f"('{index}', '{filename}', {len(indexes)}, '{','.join(map(str, indexes[index]))}'),"
+                values += f"('{index}', '{filename}', {len(indexes[index])}, '{','.join(map(str, indexes[index]))}'),"
             # Check whether the string is not empty.
             if values:
                 # Remove the last character
@@ -53,6 +53,30 @@ class Database:
                 c.execute(f"INSERT INTO Posting VALUES {values};")
 
         self.conn.commit()
+
+    def search(self, words: [str]) -> dict:
+        c = self.conn.cursor()
+        values = ""
+        for word in words:
+            values += f"'{word}',"
+        if values:
+            # Remove the last character
+            values = values[:-1]
+        cursor = c.execute(f"""
+            SELECT p.documentName AS docName, SUM(frequency) AS freq, GROUP_CONCAT(indexes) AS idxs
+            FROM Posting p
+            WHERE
+                p.word IN ({values})
+            GROUP BY p.documentName
+            ORDER BY freq DESC;
+        """)
+        result = dict()
+        for row in cursor:
+            # document, frequency, indexes = row
+            # result[document] = result.get(document, set()).union(set((indexes.split(","))))
+            print(f"\tHits: {row[1]}\n\t\tDoc: '{row[0]}'\n\t\tIndexes: {row[2]}")
+
+        return result
 
     def close_connection(self):
         # We can also close the connection if we are done with it.

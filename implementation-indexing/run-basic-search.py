@@ -7,7 +7,7 @@ from basic_search.retrival import search_files
 
 
 def print_result(document_frequencies: dict, document_snippets: dict, query: str, elapsed_time: int) -> None:
-    print(f"Results for a query: {query}")
+    print(f'Results for a query: "{query}"')
     print()
     print(f"Results found in {elapsed_time} ms.")
     print("Frequencies Document                                   Snippet")

@@ -84,9 +84,11 @@ def main() -> None:
     print("Searching the database...")
     result = search(database=database, words=words)
     print("Search complete.")
+    end_time = time.time_ns() // 1_000_000
     print("Searching for snippets...")
     full_result = find_snippets(document_texts=document_text, frequencies=result, query=sys.argv[1])
-    end_time = time.time_ns() // 1_000_000
+    print("Finished searching for snippets...")
+    print()
     print_result(result=full_result, query=sys.argv[1], elapsed_time=end_time - start_time)
     database.close_connection()
 

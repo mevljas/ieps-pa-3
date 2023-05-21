@@ -4,7 +4,7 @@ from common.reader import read_file, find_files
 
 def search_files(searched_word: [str]) -> (dict, dict):
     """
-    Find all proces all files in the input directory.
+    Process all files in the 'input' directory.
     """
     filenames: [str] = find_files()
     document_snippets: {} = dict()

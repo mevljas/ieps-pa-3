@@ -2,10 +2,11 @@ import os
 import sys
 import time
 
+from nltk import word_tokenize
+
 from database.Database import Database
 from sqlite_search.helpers.constants import db_file
-from sqlite_search.searcher import process_files
-from sqlite_search.retrival import search
+from sqlite_search.retrival import process_files
 
 
 def init_database() -> Database:
@@ -74,10 +75,9 @@ def main() -> None:
     document_text = process_files()
     print("Documents loaded.")
     start_time = time.time_ns() // 1_000_000
-    words = sys.argv[1].lower().split(" ")
-    words = [f'{word}' for word in words]
+    searched_words = word_tokenize(text=sys.argv[1].lower())
     print("Searching the database...")
-    result = search(database=database, words=words)
+    result = database.search(words=searched_words)
     print("Search complete.")
     end_time = time.time_ns() // 1_000_000
     print("Generating snippets...")

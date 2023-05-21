@@ -1,10 +1,8 @@
-from collections import defaultdict
 from os import walk
-from typing import Tuple, Any, Dict
 
 from database.Database import Database
-from sqlite_search.helpers.reader import read_file
 from sqlite_search.extractor import tokenize, remove_stopwords
+from sqlite_search.helpers.reader import read_file
 
 
 def process_files(database: Database):

@@ -1,4 +1,4 @@
-from sqlite_search.searcher import process_files
+from sqlite_search.retrival import process_files
 
 
 def main() -> None:

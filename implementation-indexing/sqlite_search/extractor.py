@@ -1,8 +1,6 @@
-import re
-
-import nltk
 from bs4 import BeautifulSoup, Comment
 from nltk.tokenize import word_tokenize
+
 from sqlite_search.helpers.constants import IGNORED_TAGS, stop_words_slovene
 
 
@@ -24,7 +22,7 @@ def clean_html(soup: BeautifulSoup) -> str:
     # Remove tags.
     [x.extract() for x in soup.findAll(IGNORED_TAGS)]
     # Find comments.
-    comments = soup.findAll(string=lambda text: isinstance(text, Comment))
+    comments = soup.findAll(string=lambda txt: isinstance(txt, Comment))
     # Remove comments.
     [comment.extract() for comment in comments]
     text = soup.get_text(separator=' ')

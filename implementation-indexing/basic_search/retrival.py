@@ -37,14 +37,14 @@ def search(document_text: str, query_words: []) -> (int, str):
                value.lower().replace(",", "").replace(".", "") in query_words]
     frequencies = len(indexes)
     if frequencies > 0:
-        snippets = find_snippet(document_text=document_text, indexes=indexes)
+        snippets = find_snippet(document_text=document_text.split(" "), indexes=indexes)
     else:
         snippets = ""
 
     return frequencies, snippets
 
 
-def find_snippet(document_text: str, indexes: [int]) -> str:
+def find_snippet(document_text: [str], indexes: [int]) -> str:
     result = []
     new_indexes = set()
     for index in indexes:

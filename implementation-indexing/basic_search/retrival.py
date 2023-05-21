@@ -28,16 +28,16 @@ def search_file(path: str, searched_word: [str]) -> (int, str):
     html = read_file(path=path)
     text = extract_text(html=html)
     query_words = [x.lower() for x in searched_word]
-    frequencies, snippets = search(document_text=text, query_words=query_words)
+    frequencies, snippets = search(document_text=text.split(" "), query_words=query_words)
     return frequencies, snippets
 
 
 def search(document_text: str, query_words: []) -> (int, str):
-    indexes = [idx for idx, value in enumerate(document_text.split(" ")) if
+    indexes = [idx for idx, value in enumerate(document_text) if
                value.lower().replace(",", "").replace(".", "") in query_words]
     frequencies = len(indexes)
     if frequencies > 0:
-        snippets = find_snippet(document_text=document_text.split(" "), indexes=indexes)
+        snippets = find_snippet(document_text=document_text, indexes=indexes)
     else:
         snippets = ""
 

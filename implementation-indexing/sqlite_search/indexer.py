@@ -4,41 +4,36 @@ from typing import Tuple, Any, Dict
 
 from database.Database import Database
 from sqlite_search.helpers.reader import read_file
-from sqlite_search.extractor import extract, remove_stopwords
+from sqlite_search.extractor import tokenize, remove_stopwords
 
 
-def process_files(database: Database) ->  dict:
+def process_files(database: Database):
     """
-    Find all proces all files in the input directory.
+    Proces all files in the input directory.
     """
     filenames: [str] = find_files()
     all_tokens: {} = set()
     all_frequencies: {} = dict()
-    document_tokens: {} = dict()
-    document_text: {} = dict()
     for filename in filenames:
-        text, tokens, frequencies = process_file(path=filename)
+        tokens, frequencies = process_file(path=filename)
         all_tokens = all_tokens.union(set(tokens))
         short_filename = filename[9:]
         all_frequencies[short_filename] = frequencies
-        document_tokens[short_filename] = tokens
-        document_text[short_filename] = text
 
     database.save_words(words=all_tokens)
     database.save_frequencies(frequencies=all_frequencies)
-    return document_text
 
 
-def process_file(path: str) -> (str, [str], {}):
+def process_file(path: str) -> ([str], {}):
     """
     Processes a file at the path and calculates word frequencies.
     :param path: path of the file to be processed.
     """
     html = read_file(path=path)
-    text, tokens = extract(html=html)
+    _, tokens = tokenize(html=html)
     tokens = remove_stopwords(tokens=tokens)
     frequencies = count_frequencies(tokens)
-    return text, tokens, frequencies
+    return tokens, frequencies
 
 
 def count_frequencies(tokens: [str]):

@@ -1,6 +1,7 @@
 from nltk.corpus import stopwords
 
 IGNORED_TAGS = ["style", "script", "meta"]
+db_file = "inverted-index.db"
 stop_words_slovene = set(stopwords.words("slovene")).union(
     {"ter", "nov", "novo", "nova", "zato", "še", "zaradi", "a", "ali", "april", "avgust", "b", "bi", "bil", "bila",
      "bile",

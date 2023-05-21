@@ -3,19 +3,14 @@ import sys
 import time
 
 from database.Database import Database
-from sqlite_search.processor import process_files
+from sqlite_search.helpers.constants import db_file
+from sqlite_search.searcher import process_files
 from sqlite_search.retrival import search
 
 
 def init_database() -> Database:
-    db_file = "inverted-index.db"
-    # Remove old database if it exists.
-    if os.path.isfile(db_file):
-        print("Deleting old database.")
-        os.remove(db_file)
     database = Database()
     database.connect(url=db_file)
-    database.create_tables()
     return database
 
 
@@ -36,9 +31,9 @@ def find_snippets(document_texts: dict, frequencies: [], query: str):
     for row in frequencies:
         document, frequency, indexes = row
         document_text = document_texts[document].split(" ")
-        search = [x.lower() for x in query.split(" ")]
+        query_words = [x.lower() for x in query.split(" ")]
         indexes = [idx for idx, value in enumerate(document_text) if
-                   value.lower().replace(",", "").replace(".", "") in search]
+                   value.lower().replace(",", "").replace(".", "") in query_words]
         snippets = find_snippet(document_text=document_text, indexes=indexes)
         result.append((frequency, document, snippets))
 
@@ -75,9 +70,9 @@ def main() -> None:
     _, algorithm = sys.argv
 
     database = init_database()
-    print("Crating an inverse index...")
-    document_text = process_files(database=database)
-    print("Inverse index created.")
+    print("Loading documents...")
+    document_text = process_files()
+    print("Documents loaded.")
     start_time = time.time_ns() // 1_000_000
     words = sys.argv[1].lower().split(" ")
     words = [f'{word}' for word in words]
@@ -85,9 +80,9 @@ def main() -> None:
     result = search(database=database, words=words)
     print("Search complete.")
     end_time = time.time_ns() // 1_000_000
-    print("Searching for snippets...")
+    print("Generating snippets...")
     full_result = find_snippets(document_texts=document_text, frequencies=result, query=sys.argv[1])
-    print("Finished searching for snippets...")
+    print("Snippets generation complete.")
     print()
     print_result(result=full_result, query=sys.argv[1], elapsed_time=end_time - start_time)
     database.close_connection()

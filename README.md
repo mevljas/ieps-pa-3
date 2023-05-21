@@ -14,6 +14,7 @@ python -m nltk.downloader punkt, stopwords
 
 ## Running the project
 1. Navigate to the `implementation-extraction` directory
-2. Run the algorithms:
+2. Create an inverse index with `python create-index.py`
+3. Run the algorithms:
 - run **basic** search with `python run-basic-search.py` or
 - run **SQLite** search with `python run-sqlite-search.py`

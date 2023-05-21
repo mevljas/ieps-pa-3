@@ -1,11 +1,9 @@
-import os
 import sys
 import time
 
 from nltk import word_tokenize
-
-from database.Database import Database
-from sqlite_search.helpers.constants import db_file
+from common.constants import db_file
+from sqlite_search.database.Database import Database
 from sqlite_search.retrival import process_files
 
 
@@ -25,6 +23,9 @@ def print_result(result: list, query: str, elapsed_time: int) -> None:
     for row in result:
         frequency, document, snippets = row
         print(f"{frequency:<12}{document:<43}{snippets}")
+
+    print()
+    print("Snippet was generated in x ms.")
 
 
 def find_snippets(document_texts: dict, frequencies: [], query: str):

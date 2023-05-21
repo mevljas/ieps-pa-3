@@ -1,7 +1,7 @@
 import os
 
-from database.Database import Database
-from sqlite_search.helpers.constants import db_file
+from common.constants import db_file
+from sqlite_search.database.Database import Database
 from sqlite_search.indexer import process_files
 
 

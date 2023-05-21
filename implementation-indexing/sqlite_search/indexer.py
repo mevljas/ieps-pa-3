@@ -1,8 +1,8 @@
 from os import walk
 
-from database.Database import Database
-from sqlite_search.extractor import tokenize, remove_stopwords
-from sqlite_search.helpers.reader import read_file
+from common.reader import read_file
+from sqlite_search.database import Database
+from common.extractor import tokenize, remove_stopwords
 
 
 def process_files(database: Database):

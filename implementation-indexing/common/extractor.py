@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup, Comment
 from nltk.tokenize import word_tokenize
 
-from sqlite_search.helpers.constants import IGNORED_TAGS, stop_words_slovene
+from common.constants import IGNORED_TAGS, stop_words_slovene
 
 
 def create_soup(html: str) -> BeautifulSoup:

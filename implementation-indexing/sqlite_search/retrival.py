@@ -1,7 +1,5 @@
-from os import walk
-
-from sqlite_search.extractor import extract_text
-from sqlite_search.helpers.reader import read_file
+from common.extractor import extract_text
+from common.reader import read_file, find_files
 
 
 def process_files() -> dict:
@@ -26,16 +24,3 @@ def process_file(path: str) -> str:
     html = read_file(path=path)
     text = extract_text(html=html)
     return text
-
-
-def find_files() -> [str]:
-    """
-    Find all input files in the input directory.
-    :return: a list of filenames.
-    """
-    filenames: [str] = []
-    for (path, directories, _) in walk('../input'):
-        for directory in directories:
-            for (path2, _, files) in walk(path + '/' + directory):
-                filenames.extend([f'{path2}/{f}' for f in files])
-    return filenames

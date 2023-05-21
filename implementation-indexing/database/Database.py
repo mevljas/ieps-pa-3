@@ -68,7 +68,8 @@ class Database:
             WHERE
                 p.word IN ({values})
             GROUP BY p.documentName
-            ORDER BY freq DESC;
+            ORDER BY freq DESC
+            LIMIT 5;
         """)
         result = []
         for row in cursor:

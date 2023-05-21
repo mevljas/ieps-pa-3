@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 
 from database.Database import Database
 from sqlite_search.processor import process_files
@@ -10,6 +11,7 @@ def init_database() -> Database:
     db_file = "inverted-index.db"
     # Remove old database if it exists.
     if os.path.isfile(db_file):
+        print("Deleting old database.")
         os.remove(db_file)
     database = Database()
     database.connect(url=db_file)
@@ -17,29 +19,33 @@ def init_database() -> Database:
     return database
 
 
-def print_result(result: list, query: str) -> None:
+def print_result(result: list, query: str, elapsed_time: int) -> None:
     print(f"Results for a query: {query}")
     print()
-    print(" Results found in x ms.")
-    print(" Frequencies Document                                   Snippet")
-    print(" ----------- ------------------------------------------ "
+    print(f"Results found in {elapsed_time} ms.")
+    print("Frequencies Document                                   Snippet")
+    print("----------- ------------------------------------------ "
           "-----------------------------------------------------------")
     for row in result:
         frequency, document, snippets = row
-        print(f" {frequency:<12}{document:<43}{snippets}")
+        print(f"{frequency:<12}{document:<43}{snippets}")
 
 
-def find_snippets(document_tokens: dict, frequencies: []):
+def find_snippets(document_texts: dict, frequencies: [], query: str):
     result = []
     for row in frequencies:
         document, frequency, indexes = row
-        snippets = find_snippet(tokens=document_tokens[document], indexes=[int(index) for index in indexes.split(",")])
+        document_text = document_texts[document].split(" ")
+        search = [x.lower() for x in query.split(" ")]
+        indexes = [idx for idx, value in enumerate(document_text) if
+                   value.lower().replace(",", "").replace(".", "") in search]
+        snippets = find_snippet(document_text=document_text, indexes=indexes)
         result.append((frequency, document, snippets))
 
     return result
 
 
-def find_snippet(tokens: [], indexes: [int]):
+def find_snippet(document_text: [], indexes: [int]):
     result = []
     new_indexes = set()
     for index in indexes:
@@ -54,9 +60,9 @@ def find_snippet(tokens: [], indexes: [int]):
             result.append('...')
         elif i > 0 and current_index - new_indexes[i - 1] > 1:
             result.append('...')
-        result.append(tokens[new_indexes[i]])
+        result.append(document_text[new_indexes[i]])
 
-    if new_indexes[-1] != len(tokens) - 1:
+    if new_indexes[-1] != len(document_text) - 1:
         result.append('...')
 
     return " ".join(result)
@@ -69,12 +75,19 @@ def main() -> None:
     _, algorithm = sys.argv
 
     database = init_database()
-    document_tokens = process_files(database=database)
+    print("Crating an inverse index...")
+    document_text = process_files(database=database)
+    print("Inverse index created.")
+    start_time = time.time_ns() // 1_000_000
     words = sys.argv[1].lower().split(" ")
     words = [f'{word}' for word in words]
+    print("Searching the database...")
     result = search(database=database, words=words)
-    full_result = find_snippets(document_tokens=document_tokens, frequencies=result)
-    print_result(result=full_result, query=sys.argv[1])
+    print("Search complete.")
+    print("Searching for snippets...")
+    full_result = find_snippets(document_texts=document_text, frequencies=result, query=sys.argv[1])
+    end_time = time.time_ns() // 1_000_000
+    print_result(result=full_result, query=sys.argv[1], elapsed_time=end_time - start_time)
     database.close_connection()
 
 

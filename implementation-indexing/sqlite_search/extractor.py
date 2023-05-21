@@ -1,3 +1,5 @@
+import re
+
 import nltk
 from bs4 import BeautifulSoup, Comment
 from nltk.tokenize import word_tokenize
@@ -13,11 +15,11 @@ def create_soup(html: str) -> BeautifulSoup:
     return BeautifulSoup(html, "html.parser")
 
 
-def clean_html(soup: BeautifulSoup) -> BeautifulSoup:
+def clean_html(soup: BeautifulSoup) -> str:
     """
     Removes unnecessary tags and comments from the HTML.
     :param soup: beautifulSoup object with html data to be cleaned.
-    :return: beautifulSoup object with cleaned html data.
+    :return: cleaned text.
     """
     # Remove tags.
     [x.extract() for x in soup.findAll(IGNORED_TAGS)]
@@ -25,24 +27,18 @@ def clean_html(soup: BeautifulSoup) -> BeautifulSoup:
     comments = soup.findAll(string=lambda text: isinstance(text, Comment))
     # Remove comments.
     [comment.extract() for comment in comments]
-    return soup
-
-
-def tokenize(soup: BeautifulSoup) -> [str]:
-    """
-    Generate tokens from the HTML page using html_parser.
-    :param soup: beautifulSoup object with html data to be cleaned.
-    :return: a list of tokens.
-    """
     text = soup.get_text(separator=' ')
     # Remove some characters.
     text = text.replace("'", "")
     text = text.replace('"', "")
-    tokens = word_tokenize(text=text)
-    return tokens
+    # text = text.replace('\n', "")
+    # Remove multiple spaces
+    # text = re.sub(' +', ' ', text)
+    text = " ".join(text.split())
+    return text
 
 
-def extract(html: str) -> [str]:
+def extract(html: str) -> (str, [str]):
     """
     Extract data from the html page.
     :param html: page HTML.
@@ -53,14 +49,15 @@ def extract(html: str) -> [str]:
     soup = create_soup(html=html)
 
     # Clean HTML.
-    soup = clean_html(soup=soup)
+    text = clean_html(soup=soup)
 
     # Generate tokens from HTML.
-    tokens = tokenize(soup=soup)
+    tokens = word_tokenize(text=text)
 
     # Convert to lower case.
     tokens = [x.lower() for x in tokens]
-    return tokens
+
+    return text, tokens
 
 
 def remove_stopwords(tokens: [str]) -> [str]:

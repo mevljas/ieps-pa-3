@@ -36,7 +36,7 @@ def clean_html(soup: BeautifulSoup) -> str:
     return text
 
 
-def tokenize(html: str) -> (str, [str]):
+def tokenize(html: str) ->  [str]:
     """
     Extract data from the html page and tokenize it.
     :param html: page HTML.
@@ -52,26 +52,7 @@ def tokenize(html: str) -> (str, [str]):
     # Generate tokens from HTML.
     tokens = word_tokenize(text=text)
 
-    # Convert to lower case.
-    tokens = [x.lower() for x in tokens]
-
-    return text, tokens
-
-
-def extract_text(html: str) -> (str, [str]):
-    """
-    Extract data from the html page.
-    :param html: page HTML.
-    :return: page text.
-    """
-
-    # Create the Beautiful soup object.
-    soup = create_soup(html=html)
-
-    # Clean HTML.
-    text = clean_html(soup=soup)
-
-    return text
+    return tokens
 
 
 def remove_stopwords(tokens: [str]) -> [str]:

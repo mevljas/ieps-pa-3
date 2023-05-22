@@ -10,15 +10,15 @@ def process_files(database: Database):
     Proces all files in the input directory.
     """
     filenames: [str] = find_files()
-    all_tokens: {} = set()
+    all_word_tokens: {} = set()
     all_frequencies: {} = dict()
     for filename in filenames:
-        tokens, frequencies = process_file(path=filename)
-        all_tokens = all_tokens.union(set(tokens))
+        word_tokens, frequencies = process_file(path=filename)
+        all_word_tokens = all_word_tokens.union(set(word_tokens))
         short_filename = filename[9:]
         all_frequencies[short_filename] = frequencies
 
-    database.save_words(words=all_tokens)
+    database.save_words(words=all_word_tokens)
     database.save_frequencies(frequencies=all_frequencies)
 
 
@@ -28,16 +28,18 @@ def process_file(path: str) -> ([str], {}):
     :param path: path of the file to be processed.
     """
     html = read_file(path=path)
-    _, tokens = tokenize(html=html)
-    tokens = remove_stopwords(tokens=tokens)
-    frequencies = count_frequencies(tokens)
-    return tokens, frequencies
+    all_tokens = tokenize(html=html)
+    # Convert to lower case.
+    all_tokens = [x.lower() for x in all_tokens]
+    filtered_tokens = remove_stopwords(tokens=all_tokens)
+    frequencies = count_frequencies(all_tokens=all_tokens, filtered_tokens=filtered_tokens)
+    return filtered_tokens, frequencies
 
 
-def count_frequencies(tokens: [str]):
+def count_frequencies(all_tokens: [str], filtered_tokens: [str]):
     frequencies = dict()
-    for unique_token in set(tokens):
-        frequencies[unique_token] = find_indices(list_to_check=tokens, item_to_find=unique_token)
+    for unique_token in set(filtered_tokens):
+        frequencies[unique_token] = find_indices(list_to_check=all_tokens, item_to_find=unique_token)
     return frequencies
 
 

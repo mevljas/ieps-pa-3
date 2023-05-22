@@ -65,8 +65,7 @@ class Database:
         cursor = c.execute(f"""
             SELECT p.documentName AS docName, SUM(frequency) AS freq, GROUP_CONCAT(indexes) AS idxs
             FROM Posting p
-            WHERE
-                p.word IN ({values})
+            WHERE p.word IN ({values}) AND frequency > 0
             GROUP BY p.documentName
             ORDER BY freq DESC;
         """)

@@ -1,4 +1,4 @@
-def find_snippet(document_text: [], indexes: [int]):
+def find_snippet(document_text_tokens: [], indexes: [int]) -> str:
     result = []
     new_indexes = set()
     for index in indexes:
@@ -13,9 +13,9 @@ def find_snippet(document_text: [], indexes: [int]):
             result.append('...')
         elif i > 0 and current_index - new_indexes[i - 1] > 1:
             result.append('...')
-        result.append(document_text[new_indexes[i]])
+        result.append(document_text_tokens[new_indexes[i]])
 
-    if new_indexes[-1] != len(document_text) - 1:
+    if new_indexes[-1] != len(document_text_tokens) - 1:
         result.append('...')
 
     return " ".join(result)

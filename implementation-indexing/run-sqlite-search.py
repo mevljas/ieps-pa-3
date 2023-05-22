@@ -16,17 +16,12 @@ def init_database() -> Database:
 
 def print_result(output: list, query: str, elapsed_time: int) -> None:
     print(f'Results for a query: "{query}"')
-    print()
     print(f"Results found in {elapsed_time} ms.")
     print("Frequencies Document                                   Snippet")
-    print("----------- ------------------------------------------ "
-          "-----------------------------------------------------------")
+    print("-" * 11 + " " + "-" * 42 + " " + "-" * 80)
     for row in output:
         frequency, document, snippets = row
         print(f"{frequency:<12}{document:<43}{snippets}")
-
-    print()
-    print("Snippet was generated in x ms.")
 
 
 def find_snippets(documents_text_tokens: dict, result: []):
@@ -49,15 +44,15 @@ def main() -> None:
     _, algorithm = sys.argv
 
     database = init_database()
-    print("Loading documents...")
-    documents_text_tokens = process_files()
-    print("Documents loaded.")
     start_time = time.time_ns()
     searched_words = word_tokenize(text=sys.argv[1].lower())
     print("Searching the database...")
     result = database.search(words=searched_words)
     print("Search complete.")
     end_time = time.time_ns()
+    print("Loading documents...")
+    documents_text_tokens = process_files(result=result)
+    print("Documents loaded.")
     print("Generating snippets...")
     output = find_snippets(documents_text_tokens=documents_text_tokens, result=result)
     print("Snippets generation complete.")

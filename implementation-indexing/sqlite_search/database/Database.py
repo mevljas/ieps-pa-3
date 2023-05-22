@@ -67,7 +67,8 @@ class Database:
             FROM Posting p
             WHERE p.word IN ({values}) AND frequency > 0
             GROUP BY p.documentName
-            ORDER BY freq DESC;
+            ORDER BY freq DESC
+            LIMIT 5;
         """)
         result = []
         for row in cursor:

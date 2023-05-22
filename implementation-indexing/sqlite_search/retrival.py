@@ -1,17 +1,16 @@
 from common.extractor import tokenize
-from common.reader import read_file, find_files
+from common.reader import read_file
 
 
-def process_files() -> dict:
+def process_files(result: [str, int, str]) -> dict:
     """
     Find and proces all files in the input directory.
     """
-    filenames: [str] = find_files()
     document_text_tokens: {} = dict()
-    for filename in filenames:
-        text_tokens = process_file(path=filename)
-        short_filename = filename[9:]
-        document_text_tokens[short_filename] = text_tokens
+    for row in result:
+        filename, _, _ = row
+        text_tokens = process_file(path=f"../input/{filename}")
+        document_text_tokens[filename] = text_tokens
 
     return document_text_tokens
 

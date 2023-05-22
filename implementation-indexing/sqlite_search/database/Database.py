@@ -1,5 +1,7 @@
 import sqlite3
 
+from common.constants import RESULTS_LIMIT
+
 
 class Database:
     def __init__(self):
@@ -68,7 +70,7 @@ class Database:
             WHERE p.word IN ({values}) AND frequency > 0
             GROUP BY p.documentName
             ORDER BY freq DESC
-            LIMIT 5;
+            LIMIT {RESULTS_LIMIT};
         """)
         result = []
         for row in cursor:

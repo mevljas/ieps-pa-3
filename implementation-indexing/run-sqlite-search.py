@@ -17,6 +17,7 @@ def init_database() -> Database:
 def print_result(output: list, query: str, elapsed_time: int) -> None:
     print(f'Results for a query: "{query}"')
     print(f"Results found in {elapsed_time} ms.")
+    print()
     print("Frequencies Document                                   Snippet")
     print("-" * 11 + " " + "-" * 42 + " " + "-" * 80)
     for row in output:
@@ -56,6 +57,7 @@ def main() -> None:
     print("Generating snippets...")
     output = find_snippets(documents_text_tokens=documents_text_tokens, result=result)
     print("Snippets generation complete.")
+    print()
     print()
     print_result(output=output, query=sys.argv[1], elapsed_time=(end_time - start_time) // 1_000_000)
     database.close_connection()

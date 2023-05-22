@@ -4,21 +4,17 @@ import time
 from nltk import word_tokenize
 
 from basic_search.retrival import search_files
+from common.constants import RESULTS_LIMIT
 
 
-def print_result(document_frequencies: dict, document_snippets: dict, query: str, elapsed_time: int) -> None:
+def print_result(result: [], query: str, elapsed_time: int) -> None:
     print(f'Results for a query: "{query}"')
-    print()
     print(f"Results found in {elapsed_time} ms.")
-    print("Frequencies Document                                   Snippet")
-    print("----------- ------------------------------------------ "
-          "-----------------------------------------------------------")
-    for document in document_frequencies.keys():
-        frequency = document_frequencies[document]
-        snippet = document_snippets[document]
-        print(f"{frequency:<12}{document:<43}{snippet}")
     print()
-    print("Snippet was generated in x ms.")
+    print("Frequencies Document                                   Snippet")
+    print("-" * 11 + " " + "-" * 42 + " " + "-" * 80)
+    for frequency, filename, snippet in result:
+        print(f"{frequency:<12}{filename:<43}{snippet}")
 
 
 def main() -> None:
@@ -29,14 +25,12 @@ def main() -> None:
 
     start_time = time.time_ns() // 1_000_000
     searched_words = word_tokenize(text=sys.argv[1].lower())
-    print("Searching the database...")
-    document_frequencies, document_snippets = search_files(searched_word=searched_words)
-    document_frequencies = dict(sorted(document_frequencies.items(), key=lambda item: item[1], reverse=True))
-    print("Search complete.")
+    print("Searching the documents...")
+    result = search_files(searched_word=searched_words)
     end_time = time.time_ns() // 1_000_000
     print()
-    print_result(document_frequencies=document_frequencies,
-                 document_snippets=document_snippets,
+    print()
+    print_result(result=result,
                  query=sys.argv[1],
                  elapsed_time=end_time - start_time)
 

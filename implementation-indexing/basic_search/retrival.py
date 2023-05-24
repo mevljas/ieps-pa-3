@@ -27,7 +27,7 @@ def search_files(searched_word: [str]) -> []:
     for result in temp_results:
         filename, frequency, indexes = result
         if frequency > 0:
-            snippets = find_snippet(document_text_tokens=document_tokens[filename], indexes=indexes)
+            snippets = find_snippet(tokens=document_tokens[filename], indexes=indexes)
             search_result.append((frequency, filename, snippets))
 
     print("Snippets generation complete.")

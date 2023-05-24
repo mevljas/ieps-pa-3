@@ -9,12 +9,22 @@ from sqlite_search.retrival import process_files
 
 
 def init_database() -> Database:
+    """
+    Establishes database connection.
+    :return: Database object.
+    """
     database = Database()
     database.connect(url=db_file)
     return database
 
 
 def print_result(output: list, query: str, elapsed_time: int) -> None:
+    """
+    Prints the results to the standard output.
+    :param output: list of results.
+    :param query: user defines query.
+    :param elapsed_time: Measured time for this searched.
+    """
     print(f'Results for a query: "{query}"')
     print(f"Results found in {elapsed_time} ms.")
     print()
@@ -25,14 +35,19 @@ def print_result(output: list, query: str, elapsed_time: int) -> None:
         print(f"{frequency:<12}{document:<43}{snippets}")
 
 
-def find_snippets(documents_text_tokens: dict, result: []):
+def find_snippets(all_tokens: dict, result: []) -> []:
+    """
+    Finds snippets for all results.
+    :param all_tokens: dictionary of all tokens by document name.
+    :param result: result of the database query.
+    :return: Generated list of outputs contain frequency, document name and snippets.
+    """
     output = []
     for row in result:
         document, frequency, indexes = row
-        index_list = indexes.split(",")
-        indexes = [int(x) for x in index_list]
-        document_text_tokens = documents_text_tokens[document]
-        snippets = find_snippet(document_text_tokens=document_text_tokens, indexes=indexes)
+        indexes = [int(x) for x in indexes.split(",")]
+        tokens = all_tokens[document]
+        snippets = find_snippet(tokens=tokens, indexes=indexes)
         output.append((frequency, document, snippets))
 
     return output
@@ -52,10 +67,10 @@ def main() -> None:
     print("Search complete.")
     end_time = time.time_ns()
     print("Loading documents...")
-    documents_text_tokens = process_files(result=result)
+    documents_tokens = process_files(result=result)
     print("Documents loaded.")
     print("Generating snippets...")
-    output = find_snippets(documents_text_tokens=documents_text_tokens, result=result)
+    output = find_snippets(all_tokens=documents_tokens, result=result)
     print("Snippets generation complete.")
     print()
     print()

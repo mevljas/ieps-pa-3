@@ -4,22 +4,24 @@ from common.reader import read_file
 
 def process_files(result: [str, int, str]) -> dict:
     """
-    Find and proces all files in the input directory.
+    Find and proces all files in the input directory. Saves document tokens to a dictionary and returns it.
+    :param result: result of the database query.
+    :return: a dictionary of documents with their tokens.
     """
-    document_text_tokens: {} = dict()
+    all_tokens: {} = dict()
     for row in result:
         filename, _, _ = row
-        text_tokens = process_file(path=f"../input/{filename}")
-        document_text_tokens[filename] = text_tokens
+        tokens = process_file(filename=f"../input/{filename}")
+        all_tokens[filename] = tokens
 
-    return document_text_tokens
+    return all_tokens
 
 
-def process_file(path: str) -> [str]:
+def process_file(filename: str) -> [str]:
     """
-    Processes a file at the path and calculates word frequencies.
-    :param path: path of the file to be processed.
+    Processes a file and returns document tokens.
+    :param filename: path of the file to be processed.
+    :return: a list of document tokens.
     """
-    html = read_file(path=path)
-    text_tokens = tokenize(html=html)
-    return text_tokens
+    html = read_file(path=filename)
+    return tokenize(html=html)

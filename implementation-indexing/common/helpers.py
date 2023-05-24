@@ -1,4 +1,10 @@
-def find_snippet(document_text_tokens: [], indexes: [int]) -> str:
+def find_snippet(tokens: [], indexes: [int]) -> str:
+    """
+    Generate snippets from a list of tokens and word indexes.
+    :param tokens: list of document tokens
+    :param indexes: list of found words indexes
+    :return: text snippets
+    """
     result = []
     new_indexes = set()
     for index in indexes:
@@ -13,9 +19,9 @@ def find_snippet(document_text_tokens: [], indexes: [int]) -> str:
             result.append('...')
         elif i > 0 and current_index - new_indexes[i - 1] > 1:
             result.append('...')
-        result.append(document_text_tokens[new_indexes[i]])
+        result.append(tokens[new_indexes[i]])
 
-    if new_indexes[-1] != len(document_text_tokens) - 1:
+    if new_indexes[-1] != len(tokens) - 1:
         result.append('...')
 
     return " ".join(result)

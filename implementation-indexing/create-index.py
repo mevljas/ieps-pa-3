@@ -6,6 +6,10 @@ from sqlite_search.indexer import process_files
 
 
 def init_database() -> Database:
+    """
+    Establishes database connection and creates the database if necessary.
+    :return: Databse object.
+    """
     # Remove old database if it exists.
     if os.path.isfile(db_file):
         print("Deleting old database...")

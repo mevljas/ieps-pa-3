@@ -7,10 +7,17 @@ class Database:
     def __init__(self):
         self.conn = None
 
-    def connect(self, url: str):
+    def connect(self, url: str) -> None:
+        """
+        Connects to the database at url.
+        :param url: path to the sql db.
+        """
         self.conn = sqlite3.connect(url)
 
-    def create_tables(self):
+    def create_tables(self) -> None:
+        """
+        Creates database tables.
+        """
         # Create table
         c = self.conn.cursor()
 
@@ -34,14 +41,22 @@ class Database:
         # Save (commit) the changes
         self.conn.commit()
 
-    def save_words(self, words: []):
+    def save_words(self, words: []) -> None:
+        """
+        Saves words to the database table index words.
+        :param words: a list of words to be saved.
+        """
         c = self.conn.cursor()
         for word in words:
             value = f"('{word}')"
             c.execute(f"INSERT INTO IndexWord VALUES {value};")
         self.conn.commit()
 
-    def save_frequencies(self, frequencies: {}):
+    def save_frequencies(self, frequencies: {}) -> None:
+        """
+        Saves a dictionary of document frequencies and indexes to the database table postings.
+        :param frequencies:
+        """
         c = self.conn.cursor()
         for file in frequencies.items():
             values = ""
@@ -57,6 +72,11 @@ class Database:
         self.conn.commit()
 
     def search(self, words: [str]) -> list[tuple[str, int, str]]:
+        """
+        Finds words in the database and returns their document names, frequencies and indexes.
+        :param words: a list of words that we're searching for.
+        :return: a list of document names, frequencies and indexes.
+        """
         c = self.conn.cursor()
         values = ""
         for word in words:
@@ -79,7 +99,10 @@ class Database:
 
         return result
 
-    def close_connection(self):
+    def close_connection(self) -> None:
+        """
+        Closes the database connection.
+        """
         # We can also close the connection if we are done with it.
         # Just be sure any changes have been committed or they will be lost.
         self.conn.close()

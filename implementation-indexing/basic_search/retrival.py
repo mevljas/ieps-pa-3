@@ -4,21 +4,24 @@ from common.helpers import find_snippet
 from common.reader import read_file, find_files
 
 
-def search_files(searched_word: [str]) -> []:
+def search_files(query_words: [str]) -> []:
     """
-    Process all files in the 'input' directory.
+    Searches all files in the 'input' directory. Returns a list that of consists of frequencies, filename and snippets.
+    :param query_words: a list of words we're searching for.
+    :return: a list of search results.
     """
     filenames: [str] = find_files()
     document_tokens: {} = dict()
     search_result = []
     temp_results = []
     for filename in filenames:
-        indexes, tokens = search_file(path=filename, searched_word=searched_word)
+        indexes, tokens = search_file(filename=filename, query_words=query_words)
         short_filename = filename[9:]
         temp_results.append((short_filename, len(indexes), indexes))
         document_tokens[short_filename] = tokens
 
     temp_results = sorted(temp_results, key=lambda item: item[1], reverse=True)
+    # Limit number of results.
     temp_results = temp_results[:RESULTS_LIMIT]
 
     print("Search complete.")
@@ -34,17 +37,23 @@ def search_files(searched_word: [str]) -> []:
     return search_result
 
 
-def search_file(path: str, searched_word: [str]) -> ([int], [str]):
+def search_file(filename: str, query_words: [str]) -> ([int], [str]):
     """
-    Processes a file at the path and calculates word frequencies.
-    :param searched_word:
-    :param path: path of the file to be processed.
+    Reads a file and finds word indexes.
+    :param query_words: a list of words we're searching for.
+    :param filename: path of the file to be searched.
     """
-    html = read_file(path=path)
+    html = read_file(path=filename)
     tokens = tokenize(html=html)
-    return search(document_text=tokens, query_words=searched_word), tokens
+    return search(tokens=tokens, query_words=query_words), tokens
 
 
-def search(document_text: [str], query_words: []) -> [int]:
-    return [idx for idx, value in enumerate(document_text) if
+def search(tokens: [str], query_words: []) -> [int]:
+    """
+    Find and returns indexes of document tokens that match the searched words.
+    :param tokens: a list of document tokens.
+    :param query_words: a list of words we're searching for.
+    :return: a list of indexes.
+    """
+    return [idx for idx, value in enumerate(tokens) if
             value.lower() in query_words]

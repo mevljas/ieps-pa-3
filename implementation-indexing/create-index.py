@@ -1,4 +1,5 @@
 import os
+import time
 
 from common.constants import db_file
 from sqlite_search.database.Database import Database
@@ -23,9 +24,11 @@ def init_database() -> Database:
 
 def main() -> None:
     database = init_database()
+    start_time = time.time()
     print("Crating an inverse index...")
     process_files(database=database)
-    print("Inverse index created.")
+    end_time = time.time()
+    print(f"Inverse index created in {(end_time - start_time)} s.")
     database.close_connection()
 
 

@@ -1,14 +1,16 @@
+import time
+
 from common.constants import RESULTS_LIMIT
 from common.extractor import tokenize
 from common.helpers import find_snippet
 from common.reader import read_file, find_files
 
 
-def search_files(query_words: [str]) -> []:
+def search_files(query_words: [str]) -> ([], int):
     """
     Searches all files in the 'input' directory. Returns a list that of consists of frequencies, filename and snippets.
     :param query_words: a list of words we're searching for.
-    :return: a list of search results.
+    :return: a list of search results and end search time.
     """
     filenames: [str] = find_files()
     document_tokens: {} = dict()
@@ -23,6 +25,7 @@ def search_files(query_words: [str]) -> []:
     temp_results = sorted(temp_results, key=lambda item: item[1], reverse=True)
     # Limit number of results.
     temp_results = temp_results[:RESULTS_LIMIT]
+    end_time = time.time_ns() // 1_000_000
 
     print("Search complete.")
     print("Generating snippets...")
@@ -34,7 +37,7 @@ def search_files(query_words: [str]) -> []:
             search_result.append((frequency, filename, snippets))
 
     print("Snippets generation complete.")
-    return search_result
+    return search_result, end_time
 
 
 def search_file(filename: str, query_words: [str]) -> ([int], [str]):

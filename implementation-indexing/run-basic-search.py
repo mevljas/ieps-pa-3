@@ -32,8 +32,7 @@ def main() -> None:
     start_time = time.time_ns() // 1_000_000
     searched_words = word_tokenize(text=sys.argv[1].lower())
     print("Searching the documents...")
-    output = search_files(query_words=searched_words)
-    end_time = time.time_ns() // 1_000_000
+    output, end_time = search_files(query_words=searched_words)
     print()
     print()
     print_result(output=output,

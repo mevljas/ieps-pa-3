@@ -130,4 +130,3 @@ dmypy.json
 
 .idea
 .vscode
-/implementation-indexing/inverted-index.db

@@ -1,6 +1,6 @@
 # WIER (IEPS) Programming Assignment 3
 Third programming assignment for the WIER (IEPS) faculty course. 
-The main goal was to build a simple index and implement querying against it
+The main goal was to build a simple index and implement querying against it.
 
 ## Project setup
 
